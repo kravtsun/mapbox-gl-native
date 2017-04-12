@@ -8,7 +8,7 @@ namespace geojson {
 
 mbgl::FeatureCollection FeatureCollection::convert(jni::JNIEnv& env, jni::Object<FeatureCollection> jCollection) {
     auto jFeatureList = FeatureCollection::getFeatures(env, jCollection);
-    auto jFeatures = java::util::List::toArray<Feature>(env, jFeatureList);
+    auto jFeatures = java::util::List::ToArray::Call<Feature>(env, jFeatureList);
     auto size = size_t(jFeatures.Length(env));
 
     auto collection = mbgl::FeatureCollection();

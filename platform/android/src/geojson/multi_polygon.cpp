@@ -11,7 +11,7 @@ mapbox::geojson::multi_polygon MultiPolygon::convert(jni::JNIEnv &env, jni::Obje
 
     if (jMultiPolygon) {
         auto jPositionListsListList = MultiPolygon::getCoordinates(env, jMultiPolygon);
-        auto jPositionListsListArray = java::util::List::toArray<java::util::List>(env, jPositionListsListList);
+        auto jPositionListsListArray = java::util::List::ToArray::Call<java::util::List>(env, jPositionListsListList);
 
         auto size = jPositionListsListArray.Length(env);
         multiPolygon.reserve(size);

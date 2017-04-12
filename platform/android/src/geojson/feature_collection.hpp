@@ -5,8 +5,6 @@
 #include <mbgl/util/geojson.hpp>
 #include <mbgl/util/noncopyable.hpp>
 
-#include <jni/jni.hpp>
-
 namespace mbgl {
 namespace android {
 namespace geojson {

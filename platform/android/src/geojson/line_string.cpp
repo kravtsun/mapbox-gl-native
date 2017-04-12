@@ -22,7 +22,7 @@ mapbox::geojson::line_string LineString::convert(jni::JNIEnv &env, jni::Object<j
     mapbox::geojson::line_string lineString;
 
     if (jPositionList) {
-        auto jPositionArray = java::util::List::toArray<Position>(env, jPositionList);
+        auto jPositionArray = java::util::List::ToArray::Call<Position>(env, jPositionList);
 
         auto size = jPositionArray.Length(env);
         for (std::size_t i = 0; i < size; i++) {

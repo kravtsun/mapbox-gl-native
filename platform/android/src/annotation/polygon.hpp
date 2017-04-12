@@ -8,7 +8,7 @@
 #include "multi_point.hpp"
 
 #include "../geometry/lat_lng.hpp"
-#include "../java/util.hpp"
+#include "../java/lang.hpp"
 
 namespace mbgl {
 namespace android {

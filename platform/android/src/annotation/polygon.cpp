@@ -13,7 +13,7 @@ mbgl::FillAnnotation Polygon::toAnnotation(jni::JNIEnv& env, jni::Object<Polygon
 
     mbgl::Polygon<double> geometry { MultiPoint::toGeometry<mbgl::LinearRing<double>>(env, points) };
 
-    auto jHoleListsArray = java::util::List::toArray<java::util::List>(env, holes);
+    auto jHoleListsArray = java::util::List::ToArray::Call<java::util::List>(env, holes);
     std::size_t jHoleListsSize = jHoleListsArray.Length(env);
     for (std::size_t i = 0; i < jHoleListsSize; i++) {
         auto jHoleList = jHoleListsArray.Get(env, i);

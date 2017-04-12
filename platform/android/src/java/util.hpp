@@ -1,73 +1,70 @@
 #pragma once
 
-#include <mbgl/util/noncopyable.hpp>
+#include "lang.hpp"
 
-#include <jni/jni.hpp>
+#include <mbgl/util/noncopyable.hpp>
 
 namespace mbgl {
 namespace android {
 namespace java {
 namespace util {
 
-class List : private mbgl::util::noncopyable {
-public:
+struct List : public ClassBinding<List> {
+    static constexpr auto Name() { return "java/util/List"; }
 
-    static constexpr auto Name() { return "java/util/List"; };
-
-    template<class T>
-    static jni::Array<jni::Object<T>> toArray(jni::JNIEnv& env, jni::Object<List> list) {
-        static auto toArray = List::javaClass.GetMethod<jni::Array<jni::Object<>> ()>(env, "toArray");
-        return (jni::Array<jni::Object<T>>) list.Call(env, toArray);
+    struct ToArray : public MethodBinding<List, ToArray, jni::Array<jni::Object<>>(void)> {
+        static constexpr auto Name() { return "toArray"; }
+        template <class T = jni::ObjectTag, class... Args>
+        static auto Call(Args&&... args) {
+            return (jni::Array<jni::Object<T>>)Base::Call(std::forward<Args>(args)...);
+        }
     };
-
-    static jni::Class<List> javaClass;
-
 };
 
-class Set : private mbgl::util::noncopyable {
-public:
+struct Map : public ClassBinding<Map> {
+    static constexpr auto Name() { return "java/util/Map"; }
 
-    static constexpr auto Name() { return "java/util/Set"; };
-
-    template<class T>
-    static jni::Array<jni::Object<T>> toArray(jni::JNIEnv& env, jni::Object<Set> list) {
-        static auto toArray = Set::javaClass.GetMethod<jni::Array<jni::Object<>> ()>(env, "toArray");
-        return (jni::Array<jni::Object<T>>) list.Call(env, toArray);
-    };
-
-    static jni::Class<Set> javaClass;
-
-};
-
-class Map : private mbgl::util::noncopyable {
-public:
-
-    class Entry : private mbgl::util::noncopyable {
-    public:
+    struct Entry : public ClassBinding<Entry> {
         static constexpr auto Name() { return "java/util/Map$Entry"; };
 
-        template <class T>
-        static jni::Object<T> getKey(jni::JNIEnv& env, jni::Object<Entry> entry) {
-            static auto method = Entry::javaClass.GetMethod<jni::Object<> ()>(env, "getKey");
-            return (jni::Object<T>) entry.Call(env, method);
-        }
+        struct GetKey : public MethodBinding<Entry, GetKey, jni::Object<>(void)> {
+            static constexpr auto Name() { return "getKey"; }
+            template <class T = jni::ObjectTag, class... Args>
+            static auto Call(Args&&... args) {
+                return (jni::Object<T>)Base::Call(std::forward<Args>(args)...);
+            }
+        };
 
-        template <class T>
-        static jni::Object<T> getValue(jni::JNIEnv& env, jni::Object<Entry> entry) {
-            static auto method = Entry::javaClass.GetMethod<jni::Object<> ()>(env, "getValue");
-            return (jni::Object<T>) entry.Call(env, method).Get();
-        }
-
-        static jni::Class<Entry> javaClass;
+        struct GetValue : public MethodBinding<Entry, GetValue, jni::Object<>(void)> {
+            static constexpr auto Name() { return "getValue"; }
+            template <class T = jni::ObjectTag, class... Args>
+            static auto Call(Args&&... args) {
+                return (jni::Object<T>)Base::Call(std::forward<Args>(args)...);
+            }
+        };
     };
 
-    static constexpr auto Name() { return "java/util/Map"; };
-
-    static jni::Class<Map> javaClass;
+    struct Get : public MethodBinding<Map, Get, jni::Object<>(jni::Object<>)> {
+        static constexpr auto Name() { return "get"; }
+        static jni::Object<> Call(jni::JNIEnv& env, jni::Object<Map> obj, const char* key) {
+            return Base::Call(env, obj,
+                              jni::Cast(env, jni::Make<jni::String>(env, std::string(key)),
+                                        java::lang::Object::Class(env)));
+        }
+    };
 };
 
-void registerNative(jni::JNIEnv&);
+struct Set : public ClassBinding<Set> {
+    static constexpr auto Name() { return "java/util/Set"; }
 
+    struct ToArray : public MethodBinding<Set, ToArray, jni::Array<jni::Object<>>(void)> {
+        static constexpr auto Name() { return "toArray"; }
+        template <class T = jni::ObjectTag, class... Args>
+        static auto Call(Args&&... args) {
+            return (jni::Array<jni::Object<T>>)Base::Call(std::forward<Args>(args)...);
+        }
+    };
+};
 
 } // namespace util
 } // namespace java

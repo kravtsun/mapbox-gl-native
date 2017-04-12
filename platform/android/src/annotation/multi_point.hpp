@@ -4,6 +4,7 @@
 #include <jni/jni.hpp>
 
 #include "../geometry/lat_lng.hpp"
+#include "../java/lang.hpp"
 #include "../java/util.hpp"
 
 namespace mbgl {
@@ -16,7 +17,7 @@ protected:
   template <class Geometry>
   static Geometry toGeometry(JNIEnv& env, jni::Object<java::util::List> pointsList) {
       NullCheck(env, &pointsList);
-      auto jarray = java::util::List::toArray<LatLng>(env, pointsList);
+      auto jarray = java::util::List::ToArray::Call<LatLng>(env, pointsList);
       NullCheck(env, &jarray);
 
       std::size_t size = jarray.Length(env);

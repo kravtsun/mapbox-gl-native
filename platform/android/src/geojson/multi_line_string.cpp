@@ -22,7 +22,7 @@ mapbox::geojson::multi_line_string MultiLineString::convert(jni::JNIEnv &env, jn
     mapbox::geojson::multi_line_string multiLineString;
 
     if (jPositionListsList) {
-        auto jPositionListsArray = java::util::List::toArray<java::util::List>(env, jPositionListsList);
+        auto jPositionListsArray = java::util::List::ToArray::Call<java::util::List>(env, jPositionListsList);
 
         auto size = jPositionListsArray.Length(env);
         multiLineString.reserve(size);

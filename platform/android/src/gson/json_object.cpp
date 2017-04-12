@@ -14,16 +14,16 @@ static void iterateEntrySet(jni::JNIEnv& env, jni::Object<JsonObject> jsonObject
     // Get Set<Map.Entry<String, JsonElement>>
     static auto method = JsonObject::javaClass.GetMethod<jni::Object<java::util::Set> ()>(env, "entrySet");
     auto entrySet = jsonObject.Call(env, method);
-    jni::Array<jni::Object<java::util::Map::Entry>> entryArray = java::util::Set::toArray<java::util::Map::Entry>(env, entrySet);
+    auto entryArray = java::util::Set::ToArray::Call<java::util::Map::Entry>(env, entrySet);
 
     size_t size = entryArray.Length(env);
     for (size_t i = 0; i < size; i++) {
         auto entry = entryArray.Get(env, i);
         if (entry) {
             // Convert
-            auto jKey = java::util::Map::Entry::getKey<jni::ObjectTag>(env, entry);
+            auto jKey = java::util::Map::Entry::GetKey::Call(env, entry);
             auto jKeyString = jni::String(reinterpret_cast<jni::jstring*>(jKey.Get()));
-            auto jValue = java::util::Map::Entry::getValue<gson::JsonElement>(env, entry);
+            auto jValue = java::util::Map::Entry::GetValue::Call<gson::JsonElement>(env, entry);
 
             // Callback
             callback(jKeyString, jValue);
