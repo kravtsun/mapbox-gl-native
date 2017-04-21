@@ -41,7 +41,7 @@ public:
 
 TEST(GeoJSONTile, Issue7648) {
     GeoJSONTileTest test;
-    GeoJSONTile tile(OverscaledTileID(0, 0, 0), "source", test.updateParameters);
+    GeoJSONTile tile(OverscaledTileID(0, 0, 0), "source", test.updateParameters, {});
 
     test.style.addLayer(std::make_unique<CircleLayer>("circle", "source"));
 

@@ -179,10 +179,24 @@ set(MBGL_CORE_FILES
     src/mbgl/renderer/raster_bucket.hpp
     src/mbgl/renderer/render_item.hpp
     src/mbgl/renderer/render_pass.hpp
+    src/mbgl/renderer/render_source.cpp
+    src/mbgl/renderer/render_source.hpp
     src/mbgl/renderer/render_tile.cpp
     src/mbgl/renderer/render_tile.hpp
     src/mbgl/renderer/symbol_bucket.cpp
     src/mbgl/renderer/symbol_bucket.hpp
+    src/mbgl/renderer/tile_pyramid.cpp
+    src/mbgl/renderer/tile_pyramid.hpp
+
+    # renderer/source
+    src/mbgl/renderer/source/render_annotation_source.cpp
+    src/mbgl/renderer/source/render_annotation_source.hpp
+    src/mbgl/renderer/source/render_geojson_source.cpp
+    src/mbgl/renderer/source/render_geojson_source.hpp
+    src/mbgl/renderer/source/render_raster_source.cpp
+    src/mbgl/renderer/source/render_raster_source.hpp
+    src/mbgl/renderer/source/render_vector_source.cpp
+    src/mbgl/renderer/source/render_vector_source.hpp
 
     # shaders
     src/mbgl/shaders/circle.cpp

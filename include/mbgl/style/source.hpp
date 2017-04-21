@@ -57,9 +57,6 @@ public:
     std::unique_ptr<Source> copy(const std::string& id) const;
 
     optional<std::string> getAttribution() const;
-    optional<Range<uint8_t>> getZoomRange() const;
-
-    std::vector<Feature> querySourceFeatures(const SourceQueryOptions& options = {});
 
     // Private implementation
     class Impl;

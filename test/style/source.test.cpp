@@ -7,6 +7,10 @@
 #include <mbgl/style/sources/vector_source.hpp>
 #include <mbgl/style/sources/geojson_source.hpp>
 
+#include <mbgl/renderer/source/render_raster_source.hpp>
+#include <mbgl/renderer/source/render_vector_source.hpp>
+#include <mbgl/renderer/source/render_geojson_source.hpp>
+
 #include <mbgl/util/run_loop.hpp>
 #include <mbgl/util/string.hpp>
 #include <mbgl/util/io.hpp>
@@ -69,32 +73,6 @@ public:
         loop.stop();
     }
 };
-
-TEST(Source, DefaultZoomRange) {
-    VectorSource vectorSource("vectorSource", "url");
-    EXPECT_FALSE(vectorSource.getZoomRange());
-    vectorSource.baseImpl->loaded = true;
-    EXPECT_EQ(vectorSource.getZoomRange()->min, 0u);
-    EXPECT_EQ(vectorSource.getZoomRange()->max, 22u);
-
-    GeoJSONSource geojsonSource("source");
-    EXPECT_FALSE(geojsonSource.getZoomRange());
-    geojsonSource.baseImpl->loaded = true;
-    EXPECT_EQ(geojsonSource.getZoomRange()->min, 0u);
-    EXPECT_EQ(geojsonSource.getZoomRange()->max, 18u);
-
-    Tileset tileset;
-    RasterSource rasterSource("source", tileset, 512);
-    EXPECT_FALSE(rasterSource.getZoomRange());
-    rasterSource.baseImpl->loaded = true;
-    EXPECT_EQ(rasterSource.getZoomRange()->min, 0u);
-    EXPECT_EQ(rasterSource.getZoomRange()->max, 22u);
-    EXPECT_EQ(*rasterSource.getZoomRange(), tileset.zoomRange);
-
-    AnnotationSource annotationSource;
-    EXPECT_EQ(annotationSource.getZoomRange()->min, 0u);
-    EXPECT_EQ(annotationSource.getZoomRange()->max, 22u);
-}
 
 TEST(Source, LoadingFail) {
     SourceTest test;
@@ -168,7 +146,9 @@ TEST(Source, RasterTileEmpty) {
     RasterSource source("source", tileset, 512);
     source.baseImpl->setObserver(&test.observer);
     source.baseImpl->loadDescription(test.fileSource);
-    source.baseImpl->updateTiles(test.updateParameters);
+
+    RenderRasterSource renderSource(source);
+    renderSource.updateTiles(test.updateParameters);
 
     test.run();
 }
@@ -197,7 +177,9 @@ TEST(Source, VectorTileEmpty) {
     VectorSource source("source", tileset);
     source.baseImpl->setObserver(&test.observer);
     source.baseImpl->loadDescription(test.fileSource);
-    source.baseImpl->updateTiles(test.updateParameters);
+
+    RenderVectorSource renderSource(source);
+    renderSource.updateTiles(test.updateParameters);
 
     test.run();
 }
@@ -226,7 +208,9 @@ TEST(Source, RasterTileFail) {
     RasterSource source("source", tileset, 512);
     source.baseImpl->setObserver(&test.observer);
     source.baseImpl->loadDescription(test.fileSource);
-    source.baseImpl->updateTiles(test.updateParameters);
+
+    RenderRasterSource renderSource(source);
+    renderSource.updateTiles(test.updateParameters);
 
     test.run();
 }
@@ -255,7 +239,9 @@ TEST(Source, VectorTileFail) {
     VectorSource source("source", tileset);
     source.baseImpl->setObserver(&test.observer);
     source.baseImpl->loadDescription(test.fileSource);
-    source.baseImpl->updateTiles(test.updateParameters);
+
+    RenderVectorSource renderSource(source);
+    renderSource.updateTiles(test.updateParameters);
 
     test.run();
 }
@@ -283,7 +269,9 @@ TEST(Source, RasterTileCorrupt) {
     RasterSource source("source", tileset, 512);
     source.baseImpl->setObserver(&test.observer);
     source.baseImpl->loadDescription(test.fileSource);
-    source.baseImpl->updateTiles(test.updateParameters);
+
+    RenderRasterSource renderSource(source);
+    renderSource.updateTiles(test.updateParameters);
 
     test.run();
 }
@@ -315,7 +303,9 @@ TEST(Source, VectorTileCorrupt) {
     VectorSource source("source", tileset);
     source.baseImpl->setObserver(&test.observer);
     source.baseImpl->loadDescription(test.fileSource);
-    source.baseImpl->updateTiles(test.updateParameters);
+
+    RenderVectorSource renderSource(source);
+    renderSource.updateTiles(test.updateParameters);
 
     test.run();
 }
@@ -342,7 +332,9 @@ TEST(Source, RasterTileCancel) {
     RasterSource source("source", tileset, 512);
     source.baseImpl->setObserver(&test.observer);
     source.baseImpl->loadDescription(test.fileSource);
-    source.baseImpl->updateTiles(test.updateParameters);
+
+    RenderRasterSource renderSource(source);
+    renderSource.updateTiles(test.updateParameters);
 
     test.run();
 }
@@ -369,7 +361,9 @@ TEST(Source, VectorTileCancel) {
     VectorSource source("source", tileset);
     source.baseImpl->setObserver(&test.observer);
     source.baseImpl->loadDescription(test.fileSource);
-    source.baseImpl->updateTiles(test.updateParameters);
+
+    RenderVectorSource renderSource(source);
+    renderSource.updateTiles(test.updateParameters);
 
     test.run();
 }
@@ -408,7 +402,9 @@ TEST(Source, RasterTileAttribution) {
     RasterSource source("source", "url", 512);
     source.baseImpl->setObserver(&test.observer);
     source.baseImpl->loadDescription(test.fileSource);
-    source.baseImpl->updateTiles(test.updateParameters);
+
+    RenderRasterSource renderSource(source);
+    renderSource.updateTiles(test.updateParameters);
 
     test.run();
 }

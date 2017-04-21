@@ -1,6 +1,7 @@
 #include <mbgl/renderer/painter.hpp>
 #include <mbgl/renderer/paint_parameters.hpp>
 #include <mbgl/renderer/render_tile.hpp>
+#include <mbgl/renderer/render_source.hpp>
 
 #include <mbgl/style/source.hpp>
 #include <mbgl/style/source_impl.hpp>
@@ -133,7 +134,7 @@ void Painter::render(const Style& style, const FrameData& frame_, View& view, Sp
 
     RenderData renderData = style.getRenderData(frame.debugOptions, state.getAngle());
     const std::vector<RenderItem>& order = renderData.order;
-    const std::unordered_set<Source*>& sources = renderData.sources;
+    const std::unordered_set<RenderSource*>& sources = renderData.sources;
 
     // Update the default matrices to the current viewport dimensions.
     state.getProjMatrix(projMatrix);
@@ -187,7 +188,7 @@ void Painter::render(const Style& style, const FrameData& frame_, View& view, Sp
         // Update all clipping IDs.
         algorithm::ClipIDGenerator generator;
         for (const auto& source : sources) {
-            source->baseImpl->startRender(generator, projMatrix, state);
+            source->startRender(generator, projMatrix, state);
         }
 
         MBGL_DEBUG_GROUP(context, "clipping masks");
@@ -237,7 +238,7 @@ void Painter::render(const Style& style, const FrameData& frame_, View& view, Sp
         // When only rendering layers via the stylesheet, it's possible that we don't
         // ever visit a tile during rendering.
         for (const auto& source : sources) {
-            source->baseImpl->finishRender(*this);
+            source->finishRender(*this);
         }
     }
 

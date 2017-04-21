@@ -31,6 +31,7 @@ class RenderData;
 class TransformState;
 class RenderedQueryOptions;
 class Scheduler;
+class RenderSource;
 
 namespace style {
 
@@ -118,6 +119,9 @@ private:
     std::vector<std::unique_ptr<Layer>> layers;
     std::vector<std::string> classes;
     TransitionOptions transitionOptions;
+
+    std::vector<std::unique_ptr<RenderSource>> renderSources;
+    RenderSource* getRenderSource(const std::string& id) const;
 
     // Defaults
     std::string name;

@@ -1,10 +1,11 @@
-#include <mbgl/util/logging.hpp>
-#include <mbgl/storage/file_source.hpp>
+#include <mbgl/style/sources/geojson_source_impl.hpp>
 #include <mbgl/style/conversion/geojson.hpp>
 #include <mbgl/style/source_observer.hpp>
-#include <mbgl/style/sources/geojson_source_impl.hpp>
-#include <mbgl/tile/geojson_tile.hpp>
+#include <mbgl/tile/tile_id.hpp>
+#include <mbgl/storage/file_source.hpp>
 #include <mbgl/util/rapidjson.hpp>
+#include <mbgl/util/constants.cpp>
+#include <mbgl/util/logging.hpp>
 
 #include <mapbox/geojson.hpp>
 #include <mapbox/geojson/rapidjson.hpp>
@@ -62,8 +63,6 @@ void GeoJSONSource::Impl::setGeoJSON(const GeoJSON& geoJSON) {
 void GeoJSONSource::Impl::_setGeoJSON(const GeoJSON& geoJSON) {
     double scale = util::EXTENT / util::tileSize;
 
-    cache.clear();
-
     if (options.cluster
         && geoJSON.is<mapbox::geometry::feature_collection<double>>()
         && !geoJSON.get<mapbox::geometry::feature_collection<double>>().empty()) {
@@ -83,24 +82,18 @@ void GeoJSONSource::Impl::_setGeoJSON(const GeoJSON& geoJSON) {
         vtOptions.tolerance = scale * options.tolerance;
         geoJSONOrSupercluster = std::make_unique<mapbox::geojsonvt::GeoJSONVT>(geoJSON, vtOptions);
     }
-
-    for (auto const &item : tiles) {
-        GeoJSONTile* geoJSONTile = static_cast<GeoJSONTile*>(item.second.get());
-        setTileData(*geoJSONTile, geoJSONTile->id);
-    }
 }
 
-void GeoJSONSource::Impl::setTileData(GeoJSONTile& tile, const OverscaledTileID& tileID) {
-    if (geoJSONOrSupercluster.is<GeoJSONVTPointer>()) {
-        tile.updateData(geoJSONOrSupercluster.get<GeoJSONVTPointer>()->getTile(tileID.canonical.z,
-                                                                               tileID.canonical.x,
-                                                                               tileID.canonical.y).features);
-    } else {
-        assert(geoJSONOrSupercluster.is<SuperclusterPointer>());
-        tile.updateData(geoJSONOrSupercluster.get<SuperclusterPointer>()->getTile(tileID.canonical.z,
-                                                                                  tileID.canonical.x,
-                                                                                  tileID.canonical.y));
-    }
+mapbox::geometry::feature_collection<int16_t>
+GeoJSONSource::Impl::getTileData(const CanonicalTileID& tileID) const {
+    return geoJSONOrSupercluster.match(
+        [&] (const GeoJSONVTPointer& p) {
+            return p->getTile(tileID.z, tileID.x, tileID.y).features;
+        },
+        [&] (const SuperclusterPointer& p) {
+            return p->getTile(tileID.z, tileID.x, tileID.y);
+        }
+    );
 }
 
 void GeoJSONSource::Impl::loadDescription(FileSource& fileSource) {
@@ -135,8 +128,6 @@ void GeoJSONSource::Impl::loadDescription(FileSource& fileSource) {
                 return;
             }
 
-            invalidateTiles();
-
             conversion::Error error;
             optional<GeoJSON> geoJSON = conversion::convertGeoJSON<JSValue>(d, error);
             if (!geoJSON) {
@@ -155,19 +146,8 @@ void GeoJSONSource::Impl::loadDescription(FileSource& fileSource) {
     });
 }
 
-optional<Range<uint8_t>> GeoJSONSource::Impl::getZoomRange() const {
-    if (loaded) {
-        return { { 0, options.maxzoom }};
-    }
-    return {};
-}
-
-std::unique_ptr<Tile> GeoJSONSource::Impl::createTile(const OverscaledTileID& tileID,
-                                                      const UpdateParameters& parameters) {
-    assert(loaded);
-    auto tilePointer = std::make_unique<GeoJSONTile>(tileID, base.getID(), parameters);
-    setTileData(*tilePointer.get(), tileID);
-    return std::move(tilePointer);
+Range<uint8_t> GeoJSONSource::Impl::getZoomRange() const {
+    return { 0, options.maxzoom };
 }
 
 } // namespace style
