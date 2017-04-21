@@ -1,5 +1,5 @@
-#include <mbgl/style/group_by_layout.hpp>
-#include <mbgl/style/layer.hpp>
+#include <mbgl/renderer/group_by_layout.hpp>
+#include <mbgl/renderer/render_layer.hpp>
 #include <mbgl/style/layer_impl.hpp>
 #include <mbgl/style/conversion/stringify.hpp>
 #include <mbgl/util/rapidjson.hpp>
@@ -10,10 +10,9 @@
 #include <unordered_map>
 
 namespace mbgl {
-namespace style {
 
-std::string layoutKey(const Layer& layer) {
-    using namespace conversion;
+std::string layoutKey(const RenderLayer& layer) {
+    using namespace style::conversion;
 
     rapidjson::StringBuffer s;
     rapidjson::Writer<rapidjson::StringBuffer> writer(s);
@@ -32,13 +31,13 @@ std::string layoutKey(const Layer& layer) {
     return s.GetString();
 }
 
-std::vector<std::vector<const Layer*>> groupByLayout(const std::vector<std::unique_ptr<Layer>>& layers) {
-    std::unordered_map<std::string, std::vector<const Layer*>> map;
+std::vector<std::vector<const RenderLayer*>> groupByLayout(const std::vector<std::unique_ptr<RenderLayer>>& layers) {
+    std::unordered_map<std::string, std::vector<const RenderLayer*>> map;
     for (auto& layer : layers) {
         map[layoutKey(*layer)].push_back(layer.get());
     }
 
-    std::vector<std::vector<const Layer*>> result;
+    std::vector<std::vector<const RenderLayer*>> result;
     for (auto& pair : map) {
         result.push_back(pair.second);
     }
@@ -46,5 +45,4 @@ std::vector<std::vector<const Layer*>> groupByLayout(const std::vector<std::uniq
     return result;
 }
 
-} // namespace style
 } // namespace mbgl

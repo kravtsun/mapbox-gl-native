@@ -4,9 +4,9 @@
 #include <mbgl/tile/tile_observer.hpp>
 #include <mbgl/style/update_parameters.hpp>
 #include <mbgl/style/layer_impl.hpp>
-#include <mbgl/style/layers/background_layer.hpp>
-#include <mbgl/style/layers/custom_layer.hpp>
-#include <mbgl/style/layers/symbol_layer.hpp>
+#include <mbgl/renderer/render_background_layer.hpp>
+#include <mbgl/renderer/render_custom_layer.hpp>
+#include <mbgl/renderer/render_symbol_layer.hpp>
 #include <mbgl/style/style.hpp>
 #include <mbgl/storage/file_source.hpp>
 #include <mbgl/geometry/feature_index.hpp>
@@ -86,12 +86,12 @@ void GeometryTile::redoLayout() {
     // state despite pending parse operations.
     pending = true;
 
-    std::vector<std::unique_ptr<Layer>> copy;
+    std::vector<std::unique_ptr<RenderLayer>> copy;
 
-    for (const Layer* layer : style.getLayers()) {
+    for (const RenderLayer* layer : style.getRenderLayers()) {
         // Avoid cloning and including irrelevant layers.
-        if (layer->is<BackgroundLayer>() ||
-            layer->is<CustomLayer>() ||
+        if (layer->is<RenderBackgroundLayer>() ||
+            layer->is<RenderCustomLayer>() ||
             layer->baseImpl->source != sourceID ||
             id.overscaledZ < std::floor(layer->baseImpl->minZoom) ||
             id.overscaledZ >= std::ceil(layer->baseImpl->maxZoom) ||
@@ -99,7 +99,7 @@ void GeometryTile::redoLayout() {
             continue;
         }
 
-        copy.push_back(layer->baseImpl->clone());
+        copy.push_back(layer->clone());
     }
 
     ++correlationID;
@@ -159,8 +159,8 @@ void GeometryTile::getIcons(IconDependencyMap iconDependencyMap) {
     }
 }
 
-Bucket* GeometryTile::getBucket(const Layer& layer) const {
-    const auto& buckets = layer.is<SymbolLayer>() ? symbolBuckets : nonSymbolBuckets;
+Bucket* GeometryTile::getBucket(const RenderLayer& layer) const {
+    const auto& buckets = layer.is<RenderSymbolLayer>() ? symbolBuckets : nonSymbolBuckets;
     const auto it = buckets.find(layer.baseImpl->id);
     if (it == buckets.end()) {
         return nullptr;

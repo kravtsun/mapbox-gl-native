@@ -17,10 +17,7 @@ class GeometryTile;
 class GeometryTileData;
 class GlyphAtlas;
 class SymbolLayout;
-
-namespace style {
-class Layer;
-} // namespace style
+class RenderLayer;
 
 class GeometryTileWorker {
 public:
@@ -31,7 +28,7 @@ public:
                        const MapMode);
     ~GeometryTileWorker();
 
-    void setLayers(std::vector<std::unique_ptr<style::Layer>>, uint64_t correlationID);
+    void setLayers(std::vector<std::unique_ptr<RenderLayer>>, uint64_t correlationID);
     void setData(std::unique_ptr<const GeometryTileData>, uint64_t correlationID);
     void setPlacementConfig(PlacementConfig, uint64_t correlationID);
     
@@ -70,7 +67,7 @@ private:
     uint64_t correlationID = 0;
 
     // Outer optional indicates whether we've received it or not.
-    optional<std::vector<std::unique_ptr<style::Layer>>> layers;
+    optional<std::vector<std::unique_ptr<RenderLayer>>> layers;
     optional<std::unique_ptr<const GeometryTileData>> data;
     optional<PlacementConfig> placementConfig;
 

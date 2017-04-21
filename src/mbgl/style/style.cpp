@@ -24,6 +24,14 @@
 #include <mbgl/geometry/line_atlas.hpp>
 #include <mbgl/renderer/render_item.hpp>
 #include <mbgl/renderer/render_tile.hpp>
+#include <mbgl/renderer/render_background_layer.hpp>
+#include <mbgl/renderer/render_circle_layer.hpp>
+#include <mbgl/renderer/render_custom_layer.hpp>
+#include <mbgl/renderer/render_fill_extrusion_layer.hpp>
+#include <mbgl/renderer/render_fill_layer.hpp>
+#include <mbgl/renderer/render_line_layer.hpp>
+#include <mbgl/renderer/render_raster_layer.hpp>
+#include <mbgl/renderer/render_symbol_layer.hpp>
 #include <mbgl/util/constants.hpp>
 #include <mbgl/util/exception.hpp>
 #include <mbgl/util/geometry.hpp>
@@ -225,7 +233,9 @@ Layer* Style::addLayer(std::unique_ptr<Layer> layer, optional<std::string> befor
 
     layer->baseImpl->setObserver(this);
 
-    return layers.emplace(before ? findLayer(*before) : layers.end(), std::move(layer))->get();
+    auto added = layers.emplace(before ? findLayer(*before) : layers.end(), std::move(layer))->get();
+    renderLayers.emplace(before ? findRenderLayer(*before) : renderLayers.end(), added->baseImpl->createRenderLayer());
+    return std::move(added);
 }
 
 std::unique_ptr<Layer> Style::removeLayer(const std::string& id) {
@@ -243,7 +253,55 @@ std::unique_ptr<Layer> Style::removeLayer(const std::string& id) {
     }
 
     layers.erase(it);
+    removeRenderLayer(id);
     return layer;
+}
+
+std::vector<const RenderLayer*> Style::getRenderLayers() const {
+    std::vector<const RenderLayer*> result;
+    result.reserve(renderLayers.size());
+    for (const auto& layer : renderLayers) {
+        result.push_back(layer.get());
+    }
+    return result;
+}
+
+std::vector<RenderLayer*> Style::getRenderLayers() {
+    std::vector<RenderLayer*> result;
+    result.reserve(renderLayers.size());
+    for (auto& layer : renderLayers) {
+        result.push_back(layer.get());
+    }
+    return result;
+}
+
+std::vector<std::unique_ptr<RenderLayer>>::const_iterator Style::findRenderLayer(const std::string& id) const {
+    return std::find_if(renderLayers.begin(), renderLayers.end(), [&](const auto& layer) {
+        return layer->baseImpl->id == id;
+    });
+}
+
+RenderLayer* Style::getRenderLayer(const std::string& id) const {
+    auto it = findRenderLayer(id);
+    return it != renderLayers.end() ? it->get() : nullptr;
+}
+
+void Style::removeRenderLayer(const std::string& id) {
+    auto it = std::find_if(renderLayers.begin(), renderLayers.end(), [&](const auto& layer) {
+        return layer->baseImpl->id == id;
+    });
+
+    if (it == renderLayers.end()) {
+        return;
+    }
+
+    // TODO
+//    auto layer = std::move(*it);
+//    if (CustomLayer* customLayer = layer->as<CustomLayer>()) {
+//        customLayer->impl->deinitialize();
+//    }
+
+    renderLayers.erase(it);
 }
 
 std::string Style::getName() const {
@@ -303,8 +361,8 @@ void Style::cascade(const TimePoint& timePoint, MapMode mode) {
         mode == MapMode::Continuous ? transitionOptions : immediateTransition
     };
 
-    for (const auto& layer : layers) {
-        layer->baseImpl->cascade(parameters);
+    for (const auto& layer : renderLayers) {
+        layer->cascade(parameters);
     }
 }
 
@@ -325,11 +383,11 @@ void Style::recalculate(float z, const TimePoint& timePoint, MapMode mode) {
     };
 
     hasPendingTransitions = false;
-    for (const auto& layer : layers) {
-        hasPendingTransitions |= layer->baseImpl->evaluate(parameters);
+    for (const auto& layer : renderLayers) {
+        hasPendingTransitions |= layer->evaluate(parameters);
 
         // Disable this layer if it doesn't need to be rendered.
-        const bool needsRendering = layer->baseImpl->needsRendering(zoomHistory.lastZoom);
+        const bool needsRendering = layer->needsRendering(zoomHistory.lastZoom);
         if (!needsRendering) {
             continue;
         }
@@ -408,19 +466,19 @@ RenderData Style::getRenderData(MapDebugOptions debugOptions, float angle) const
         }
     }
 
-    for (const auto& layer : layers) {
-        if (!layer->baseImpl->needsRendering(zoomHistory.lastZoom)) {
+    for (const auto& layer : renderLayers) {
+        if (!layer->needsRendering(zoomHistory.lastZoom)) {
             continue;
         }
 
-        if (const BackgroundLayer* background = layer->as<BackgroundLayer>()) {
+        if (const RenderBackgroundLayer* background = layer->as<RenderBackgroundLayer>()) {
             if (debugOptions & MapDebugOptions::Overdraw) {
                 // We want to skip glClear optimization in overdraw mode.
                 result.order.emplace_back(*layer);
                 continue;
             }
-            const BackgroundPaintProperties::Evaluated& paint = background->impl->paint.evaluated;
-            if (layer.get() == layers[0].get() && paint.get<BackgroundPattern>().from.empty()) {
+            const BackgroundPaintProperties::Evaluated& paint = background->evaluated;
+            if (layer.get() == renderLayers[0].get() && paint.get<BackgroundPattern>().from.empty()) {
                 // This is a solid background. We can use glClear().
                 result.backgroundColor = paint.get<BackgroundColor>() * paint.get<BackgroundOpacity>();
             } else {
@@ -430,7 +488,7 @@ RenderData Style::getRenderData(MapDebugOptions debugOptions, float angle) const
             continue;
         }
 
-        if (layer->is<CustomLayer>()) {
+        if (layer->is<RenderCustomLayer>()) {
             result.order.emplace_back(*layer);
             continue;
         }
@@ -442,7 +500,7 @@ RenderData Style::getRenderData(MapDebugOptions debugOptions, float angle) const
         }
 
         auto& renderTiles = source->baseImpl->getRenderTiles();
-        const bool symbolLayer = layer->is<SymbolLayer>();
+        const bool symbolLayer = layer->is<RenderSymbolLayer>();
 
         // Sort symbol tiles in opposite y position, so tiles with overlapping
         // symbols are drawn on top of each other, with lower symbols being
@@ -528,8 +586,8 @@ std::vector<Feature> Style::queryRenderedFeatures(const ScreenLineString& geomet
     }
 
     // Combine all results based on the style layer order.
-    for (const auto& layer : layers) {
-        if (!layer->baseImpl->needsRendering(zoomHistory.lastZoom)) {
+    for (const auto& layer : renderLayers) {
+        if (!layer->needsRendering(zoomHistory.lastZoom)) {
             continue;
         }
         auto it = resultsByLayer.find(layer->baseImpl->id);
