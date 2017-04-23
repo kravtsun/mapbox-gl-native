@@ -41,6 +41,9 @@ set(MBGL_TEST_FILES
     # programs
     test/programs/binary_program.test.cpp
 
+    # renderer
+    test/renderer/group_by_layout.test.cpp
+
     # sprite
     test/sprite/sprite_atlas.test.cpp
     test/sprite/sprite_image.test.cpp
@@ -91,7 +94,6 @@ set(MBGL_TEST_FILES
     test/style/function/source_function.test.cpp
 
     # style
-    test/style/group_by_layout.test.cpp
     test/style/paint_property.test.cpp
     test/style/source.test.cpp
     test/style/style.test.cpp
