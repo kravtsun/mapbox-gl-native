@@ -233,7 +233,7 @@ public:
         using Tuple<CascadingTypes>::Tuple;
 
         Unevaluated cascade(const CascadeParameters& parameters, Unevaluated&& prior) const {
-            return {
+            return Unevaluated {
                 this->template get<Ps>().cascade(
                         parameters,
                         std::move(prior.template get<Ps>())
