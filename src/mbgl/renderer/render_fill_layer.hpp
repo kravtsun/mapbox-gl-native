@@ -9,7 +9,7 @@ namespace mbgl {
 class RenderFillLayer: public RenderLayer {
 public:
 
-    RenderFillLayer(std::shared_ptr<style::FillLayer::Impl>);
+    RenderFillLayer(std::shared_ptr<const style::FillLayer::Impl>);
     ~RenderFillLayer() final = default;
 
     std::unique_ptr<RenderLayer> clone() const override;
@@ -30,7 +30,7 @@ public:
     style::FillPaintProperties::Unevaluated unevaluated;
     style::FillPaintProperties::Evaluated evaluated;
 
-    style::FillLayer::Impl* const impl;
+    const style::FillLayer::Impl* const impl;
 };
 
 template <>

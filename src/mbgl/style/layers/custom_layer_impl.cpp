@@ -1,12 +1,12 @@
 #include <mbgl/style/layers/custom_layer_impl.hpp>
 #include <mbgl/renderer/render_custom_layer.hpp>
 #include <mbgl/map/transform_state.hpp>
-
+#include <mbgl/util/logging.hpp>
 namespace mbgl {
 namespace style {
 
 std::unique_ptr<RenderLayer> CustomLayer::Impl::createRenderLayer() const {
-    return std::make_unique<RenderCustomLayer>(std::make_shared<style::CustomLayer::Impl>(*this));
+    return std::make_unique<RenderCustomLayer>(shared_from_this());
 }
 
 CustomLayer::Impl::Impl(const std::string& id_,
@@ -14,6 +14,7 @@ CustomLayer::Impl::Impl(const std::string& id_,
                          CustomLayerRenderFunction renderFn_,
                          CustomLayerDeinitializeFunction deinitializeFn_,
                          void* context_) {
+    Log::Info(Event::General, "New custom layer Impl: %s", id_.c_str());
     id = id_;
     initializeFn = initializeFn_;
     renderFn = renderFn_;

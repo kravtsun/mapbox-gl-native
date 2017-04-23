@@ -4,8 +4,8 @@
 
 namespace mbgl {
 
-RenderFillExtrusionLayer::RenderFillExtrusionLayer(std::shared_ptr<style::FillExtrusionLayer::Impl> impl)
-        : RenderLayer(style::LayerType::FillExtrusion, std::move(impl)) {
+RenderFillExtrusionLayer::RenderFillExtrusionLayer(std::shared_ptr<const style::FillExtrusionLayer::Impl> _impl)
+        : RenderLayer(style::LayerType::FillExtrusion, std::move(_impl)) {
           //impl(static_cast<mbgl::style::FillExtrusionLayer::Impl *>(baseImpl.get())) {
 }
 

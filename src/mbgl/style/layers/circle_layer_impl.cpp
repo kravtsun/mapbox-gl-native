@@ -5,7 +5,7 @@ namespace mbgl {
 namespace style {
 
 std::unique_ptr<RenderLayer> CircleLayer::Impl::createRenderLayer() const {
-    return std::make_unique<RenderCircleLayer>(std::make_shared<style::CircleLayer::Impl>(*this));
+    return std::make_unique<RenderCircleLayer>(shared_from_this());
 }
 
 } // namespace style

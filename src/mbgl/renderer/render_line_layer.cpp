@@ -7,9 +7,9 @@
 
 namespace mbgl {
 
-RenderLineLayer::RenderLineLayer(std::shared_ptr<style::LineLayer::Impl> impl)
-        : RenderLayer(style::LayerType::Line, std::move(impl)),
-          impl(static_cast<style::LineLayer::Impl *>(baseImpl.get())) {
+RenderLineLayer::RenderLineLayer(std::shared_ptr<const style::LineLayer::Impl> _impl)
+        : RenderLayer(style::LayerType::Line, std::move(_impl)),
+          impl(static_cast<const style::LineLayer::Impl *>(baseImpl.get())) {
 }
 
 std::unique_ptr<RenderLayer> RenderLineLayer::clone() const {

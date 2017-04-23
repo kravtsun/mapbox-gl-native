@@ -4,9 +4,9 @@
 
 namespace mbgl {
 
-RenderRasterLayer::RenderRasterLayer(std::shared_ptr<style::RasterLayer::Impl> impl)
-        : RenderLayer(style::LayerType::Raster, std::move(impl)),
-          impl(static_cast<style::RasterLayer::Impl *>(baseImpl.get())) {
+RenderRasterLayer::RenderRasterLayer(std::shared_ptr<const style::RasterLayer::Impl> _impl)
+        : RenderLayer(style::LayerType::Raster, std::move(_impl)),
+          impl(static_cast<const style::RasterLayer::Impl *>(baseImpl.get())) {
 }
 
 std::unique_ptr<RenderLayer> RenderRasterLayer::clone() const {

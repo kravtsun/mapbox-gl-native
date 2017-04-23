@@ -5,7 +5,7 @@ namespace mbgl {
 namespace style {
 
 std::unique_ptr<RenderLayer> RasterLayer::Impl::createRenderLayer() const {
-    return std::make_unique<RenderRasterLayer>(std::make_shared<style::RasterLayer::Impl>(*this));
+    return std::make_unique<RenderRasterLayer>(shared_from_this());
 }
 
 } // namespace style

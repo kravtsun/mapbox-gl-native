@@ -55,7 +55,7 @@ public:
 
 class RenderSymbolLayer: public RenderLayer {
 public:
-    RenderSymbolLayer(std::shared_ptr<style::SymbolLayer::Impl>);
+    RenderSymbolLayer(std::shared_ptr<const style::SymbolLayer::Impl>);
     ~RenderSymbolLayer() final = default;
 
     std::unique_ptr<RenderLayer> clone() const override;
@@ -78,7 +78,7 @@ public:
     float iconSize = 1.0f;
     float textSize = 16.0f;
 
-    style::SymbolLayer::Impl* const impl;
+    const style::SymbolLayer::Impl* const impl;
 };
 
 template <>

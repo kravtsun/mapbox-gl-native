@@ -4,9 +4,9 @@
 
 namespace mbgl {
 
-RenderBackgroundLayer::RenderBackgroundLayer(std::shared_ptr<style::BackgroundLayer::Impl> impl)
-        : RenderLayer(style::LayerType::Background, std::move(impl)),
-          impl(static_cast<style::BackgroundLayer::Impl *>(baseImpl.get())) {
+RenderBackgroundLayer::RenderBackgroundLayer(std::shared_ptr<const style::BackgroundLayer::Impl> _impl)
+        : RenderLayer(style::LayerType::Background, std::move(_impl)),
+          impl(static_cast<const style::BackgroundLayer::Impl *>(baseImpl.get())) {
 }
 
 std::unique_ptr<RenderLayer> RenderBackgroundLayer::clone() const {

@@ -9,7 +9,7 @@ namespace mbgl {
 class RenderBackgroundLayer: public RenderLayer {
 public:
 
-    RenderBackgroundLayer(std::shared_ptr<style::BackgroundLayer::Impl>);
+    RenderBackgroundLayer(std::shared_ptr<const style::BackgroundLayer::Impl>);
     ~RenderBackgroundLayer() final = default;
 
     std::unique_ptr<RenderLayer> clone() const override;
@@ -23,7 +23,7 @@ public:
     style::BackgroundPaintProperties::Unevaluated unevaluated;
     style::BackgroundPaintProperties::Evaluated evaluated;
 
-    style::BackgroundLayer::Impl* const impl;
+    const style::BackgroundLayer::Impl* const impl;
 };
 
 template <>

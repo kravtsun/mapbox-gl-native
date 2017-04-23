@@ -232,7 +232,7 @@ public:
     public:
         using Tuple<CascadingTypes>::Tuple;
 
-        Unevaluated cascade(const CascadeParameters& parameters, Unevaluated&& prior) {
+        Unevaluated cascade(const CascadeParameters& parameters, Unevaluated&& prior) const {
             return {
                 this->template get<Ps>().cascade(
                         parameters,

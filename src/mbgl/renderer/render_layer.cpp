@@ -3,7 +3,7 @@
 
 namespace mbgl {
 
-RenderLayer::RenderLayer(style::LayerType type_, std::shared_ptr<style::Layer::Impl> baseImpl_)
+RenderLayer::RenderLayer(style::LayerType type_, std::shared_ptr<const style::Layer::Impl> baseImpl_)
         : type(type_), baseImpl(std::move(baseImpl_)) {
 }
 

@@ -7,7 +7,7 @@
 namespace mbgl {
 namespace style {
 
-class RasterLayer::Impl : public Layer::Impl {
+class RasterLayer::Impl : public Layer::Impl, public std::enable_shared_from_this<RasterLayer::Impl> {
 public:
     std::unique_ptr<Layer> clone() const override;
     std::unique_ptr<Layer> cloneRef(const std::string& id) const override;

@@ -9,7 +9,7 @@ namespace mbgl {
 class RenderCircleLayer: public RenderLayer {
 public:
 
-    RenderCircleLayer(std::shared_ptr<style::CircleLayer::Impl>);
+    RenderCircleLayer(std::shared_ptr<const style::CircleLayer::Impl>);
     ~RenderCircleLayer() final = default;
 
     std::unique_ptr<RenderLayer> clone() const override;
@@ -30,7 +30,7 @@ public:
     style::CirclePaintProperties::Unevaluated unevaluated;
     style::CirclePaintProperties::Evaluated evaluated;
 
-    style::CircleLayer::Impl* const impl;
+    const style::CircleLayer::Impl* const impl;
 };
 
 template <>

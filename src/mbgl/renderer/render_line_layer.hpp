@@ -9,7 +9,7 @@ namespace mbgl {
 class RenderLineLayer: public RenderLayer {
 public:
 
-    RenderLineLayer(std::shared_ptr<style::LineLayer::Impl>);
+    RenderLineLayer(std::shared_ptr<const style::LineLayer::Impl>);
     ~RenderLineLayer() final = default;
 
     std::unique_ptr<RenderLayer> clone() const override;
@@ -30,7 +30,7 @@ public:
     style::LinePaintProperties::Unevaluated unevaluated;
     style::LinePaintProperties::Evaluated evaluated;
 
-    style::LineLayer::Impl* const impl;
+    const style::LineLayer::Impl* const impl;
 
     // Special case
     float dashLineWidth = 1;

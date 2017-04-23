@@ -9,7 +9,7 @@ namespace mbgl {
 class RenderFillExtrusionLayer: public RenderLayer {
 public:
 
-    RenderFillExtrusionLayer(std::shared_ptr<style::FillExtrusionLayer::Impl>);
+    RenderFillExtrusionLayer(std::shared_ptr<const style::FillExtrusionLayer::Impl>);
     ~RenderFillExtrusionLayer() final = default;
 
     std::unique_ptr<RenderLayer> clone() const override;
