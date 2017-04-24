@@ -22,8 +22,8 @@ CustomLayer::Impl::Impl(const std::string& id_,
     context = context_;
 }
 
-CustomLayer::Impl::Impl(const CustomLayer::Impl& other)
-    : Layer::Impl(other) {
+CustomLayer::Impl::Impl(const CustomLayer::Impl &other)
+        : Layer::Impl(other), std::enable_shared_from_this<CustomLayer::Impl>(other) {
     id = other.id;
     // Don't copy anything else.
 }
