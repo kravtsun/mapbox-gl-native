@@ -8,7 +8,7 @@ namespace mbgl {
 class RenderCustomLayer: public RenderLayer {
 public:
 
-    RenderCustomLayer(std::shared_ptr<const style::CustomLayer::Impl>);
+    RenderCustomLayer(const style::CustomLayer::Impl&);
     ~RenderCustomLayer() final = default;
 
     std::unique_ptr<RenderLayer> clone() const override;

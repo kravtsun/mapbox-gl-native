@@ -8,14 +8,14 @@ namespace mbgl {
 namespace style {
 
 RasterLayer::RasterLayer(const std::string& layerID, const std::string& sourceID)
-    : Layer(LayerType::Raster, std::make_shared<Impl>())
+    : Layer(LayerType::Raster, std::make_unique<Impl>())
     , impl(static_cast<Impl*>(baseImpl.get())) {
     impl->id = layerID;
     impl->source = sourceID;
 }
 
 RasterLayer::RasterLayer(const Impl& other)
-    : Layer(LayerType::Raster, std::make_shared<Impl>(other))
+    : Layer(LayerType::Raster, std::make_unique<Impl>(other))
     , impl(static_cast<Impl*>(baseImpl.get())) {
 }
 

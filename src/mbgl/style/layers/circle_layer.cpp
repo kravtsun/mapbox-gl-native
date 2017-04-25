@@ -8,14 +8,14 @@ namespace mbgl {
 namespace style {
 
 CircleLayer::CircleLayer(const std::string& layerID, const std::string& sourceID)
-    : Layer(LayerType::Circle, std::make_shared<Impl>())
+    : Layer(LayerType::Circle, std::make_unique<Impl>())
     , impl(static_cast<Impl*>(baseImpl.get())) {
     impl->id = layerID;
     impl->source = sourceID;
 }
 
 CircleLayer::CircleLayer(const Impl& other)
-    : Layer(LayerType::Circle, std::make_shared<Impl>(other))
+    : Layer(LayerType::Circle, std::make_unique<Impl>(other))
     , impl(static_cast<Impl*>(baseImpl.get())) {
 }
 

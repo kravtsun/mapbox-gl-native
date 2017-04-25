@@ -288,7 +288,7 @@ void Painter::renderPass(PaintParameters& parameters,
             MBGL_DEBUG_GROUP(context, "background");
             renderBackground(parameters, *layer.as<RenderBackgroundLayer>());
         } else if (layer.is<RenderCustomLayer>()) {
-            MBGL_DEBUG_GROUP(context, layer.baseImpl->id + " - custom");
+            MBGL_DEBUG_GROUP(context, layer.baseImpl.id + " - custom");
 
             // Reset GL state to a known state so the CustomLayer always has a clean slate.
             context.vertexArrayObject = 0;
@@ -303,7 +303,7 @@ void Painter::renderPass(PaintParameters& parameters,
             parameters.view.bind();
             context.setDirtyState();
         } else {
-            MBGL_DEBUG_GROUP(context, layer.baseImpl->id + " - " + util::toString(item.tile->id));
+            MBGL_DEBUG_GROUP(context, layer.baseImpl.id + " - " + util::toString(item.tile->id));
             item.bucket->render(*this, parameters, layer, *item.tile);
         }
     }

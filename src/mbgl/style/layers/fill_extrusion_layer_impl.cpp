@@ -5,7 +5,7 @@ namespace mbgl {
 namespace style {
 
 std::unique_ptr<RenderLayer> FillExtrusionLayer::Impl::createRenderLayer() const {
-    return std::make_unique<RenderFillExtrusionLayer>(shared_from_this());
+    return std::make_unique<RenderFillExtrusionLayer>(*this);
 }
 
 } // namespace style

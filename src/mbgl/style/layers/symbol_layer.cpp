@@ -8,14 +8,14 @@ namespace mbgl {
 namespace style {
 
 SymbolLayer::SymbolLayer(const std::string& layerID, const std::string& sourceID)
-    : Layer(LayerType::Symbol, std::make_shared<Impl>())
+    : Layer(LayerType::Symbol, std::make_unique<Impl>())
     , impl(static_cast<Impl*>(baseImpl.get())) {
     impl->id = layerID;
     impl->source = sourceID;
 }
 
 SymbolLayer::SymbolLayer(const Impl& other)
-    : Layer(LayerType::Symbol, std::make_shared<Impl>(other))
+    : Layer(LayerType::Symbol, std::make_unique<Impl>(other))
     , impl(static_cast<Impl*>(baseImpl.get())) {
 }
 

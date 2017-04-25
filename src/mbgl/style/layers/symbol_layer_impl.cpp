@@ -8,7 +8,7 @@ namespace mbgl {
 namespace style {
 
 std::unique_ptr<RenderLayer> SymbolLayer::Impl::createRenderLayer() const {
-    return std::make_unique<RenderSymbolLayer>(shared_from_this());
+    return std::make_unique<RenderSymbolLayer>(*this);
 }
 
 std::unique_ptr<SymbolLayout> SymbolLayer::Impl::createLayout(const BucketParameters& parameters,

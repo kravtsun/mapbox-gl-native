@@ -7,9 +7,9 @@
 
 namespace mbgl {
 
-RenderCircleLayer::RenderCircleLayer(std::shared_ptr<const style::CircleLayer::Impl> _impl)
-        : RenderLayer(style::LayerType::Circle, std::move(_impl)),
-          impl(static_cast<const style::CircleLayer::Impl *>(baseImpl.get())) {
+RenderCircleLayer::RenderCircleLayer(const style::CircleLayer::Impl& _impl)
+        : RenderLayer(style::LayerType::Circle, _impl),
+          impl(&_impl) {
 }
 
 std::unique_ptr<RenderLayer> RenderCircleLayer::clone() const {

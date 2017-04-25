@@ -43,7 +43,7 @@ public:
 protected:
 
     const LayerType type;
-    Layer(LayerType, std::shared_ptr<Impl>);
+    Layer(LayerType, std::unique_ptr<Impl>);
 
 public:
 
@@ -111,7 +111,7 @@ public:
     void setMaxZoom(float) const;
 
     // Private implementation
-    const std::shared_ptr<Impl> baseImpl;
+    const std::unique_ptr<Impl> baseImpl;
 
     // For use in SDK bindings, which store a reference to a platform-native peer
     // object here, so that separately-obtained references to this object share

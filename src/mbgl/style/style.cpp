@@ -277,7 +277,7 @@ std::vector<RenderLayer*> Style::getRenderLayers() {
 
 std::vector<std::unique_ptr<RenderLayer>>::const_iterator Style::findRenderLayer(const std::string& id) const {
     return std::find_if(renderLayers.begin(), renderLayers.end(), [&](const auto& layer) {
-        return layer->baseImpl->id == id;
+        return layer->baseImpl.id == id;
     });
 }
 
@@ -288,7 +288,7 @@ RenderLayer* Style::getRenderLayer(const std::string& id) const {
 
 void Style::removeRenderLayer(const std::string& id) {
     auto it = std::find_if(renderLayers.begin(), renderLayers.end(), [&](const auto& layer) {
-        return layer->baseImpl->id == id;
+        return layer->baseImpl.id == id;
     });
 
     if (it == renderLayers.end()) {
@@ -393,7 +393,7 @@ void Style::recalculate(float z, const TimePoint& timePoint, MapMode mode) {
         }
 
         // If this layer has a source, make sure that it gets loaded.
-        if (Source* source = getSource(layer->baseImpl->source)) {
+        if (Source* source = getSource(layer->baseImpl.source)) {
             source->baseImpl->enabled = true;
             if (!source->baseImpl->loaded) {
                 source->baseImpl->loadDescription(fileSource);
@@ -493,9 +493,9 @@ RenderData Style::getRenderData(MapDebugOptions debugOptions, float angle) const
             continue;
         }
 
-        Source* source = getSource(layer->baseImpl->source);
+        Source* source = getSource(layer->baseImpl.source);
         if (!source) {
-            Log::Warning(Event::Render, "can't find source for layer '%s'", layer->baseImpl->id.c_str());
+            Log::Warning(Event::Render, "can't find source for layer '%s'", layer->baseImpl.id.c_str());
             continue;
         }
 
@@ -590,7 +590,7 @@ std::vector<Feature> Style::queryRenderedFeatures(const ScreenLineString& geomet
         if (!layer->needsRendering(zoomHistory.lastZoom)) {
             continue;
         }
-        auto it = resultsByLayer.find(layer->baseImpl->id);
+        auto it = resultsByLayer.find(layer->baseImpl.id);
         if (it != resultsByLayer.end()) {
             std::move(it->second.begin(), it->second.end(), std::back_inserter(result));
         }

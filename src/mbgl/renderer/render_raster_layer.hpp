@@ -9,7 +9,7 @@ namespace mbgl {
 class RenderRasterLayer: public RenderLayer {
 public:
 
-    RenderRasterLayer(std::shared_ptr<const style::RasterLayer::Impl>);
+    RenderRasterLayer(const style::RasterLayer::Impl&);
     ~RenderRasterLayer() final = default;
 
     std::unique_ptr<RenderLayer> clone() const override;

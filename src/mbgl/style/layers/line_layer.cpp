@@ -8,14 +8,14 @@ namespace mbgl {
 namespace style {
 
 LineLayer::LineLayer(const std::string& layerID, const std::string& sourceID)
-    : Layer(LayerType::Line, std::make_shared<Impl>())
+    : Layer(LayerType::Line, std::make_unique<Impl>())
     , impl(static_cast<Impl*>(baseImpl.get())) {
     impl->id = layerID;
     impl->source = sourceID;
 }
 
 LineLayer::LineLayer(const Impl& other)
-    : Layer(LayerType::Line, std::make_shared<Impl>(other))
+    : Layer(LayerType::Line, std::make_unique<Impl>(other))
     , impl(static_cast<Impl*>(baseImpl.get())) {
 }
 

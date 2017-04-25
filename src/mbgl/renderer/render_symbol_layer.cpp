@@ -5,9 +5,9 @@
 
 namespace mbgl {
 
-RenderSymbolLayer::RenderSymbolLayer(std::shared_ptr<const style::SymbolLayer::Impl> _impl)
-        : RenderLayer(style::LayerType::Symbol, std::move(_impl)),
-          impl(static_cast<const style::SymbolLayer::Impl *>(baseImpl.get())) {
+RenderSymbolLayer::RenderSymbolLayer(const style::SymbolLayer::Impl& _impl)
+        : RenderLayer(style::LayerType::Symbol, _impl),
+          impl(&_impl) {
 }
 
 std::unique_ptr<RenderLayer> RenderSymbolLayer::clone() const {

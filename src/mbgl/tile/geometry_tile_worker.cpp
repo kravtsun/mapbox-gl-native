@@ -92,7 +92,7 @@ void GeometryTileWorker::setData(std::unique_ptr<const GeometryTileData> data_, 
     }
 }
 
-void GeometryTileWorker::setLayers(std::vector<std::unique_ptr<RenderLayer>> layers_, uint64_t correlationID_) {
+void GeometryTileWorker::setLayers(std::vector<std::unique_ptr<Layer>> layers_, uint64_t correlationID_) {
     try {
         layers = std::move(layers_);
         correlationID = correlationID_;
@@ -252,6 +252,15 @@ void GeometryTileWorker::requestNewIcons(const IconDependencyMap &iconDependenci
     }
 }
 
+static std::vector<std::unique_ptr<RenderLayer>> toRenderLayers(const std::vector<std::unique_ptr<style::Layer>>& layers) {
+    std::vector<std::unique_ptr<RenderLayer>> renderLayers;
+    renderLayers.reserve(layers.size());
+    for (auto& layer : layers) {
+        renderLayers.push_back(layer->baseImpl->createRenderLayer());
+    }
+    return renderLayers;
+}
+
 void GeometryTileWorker::redoLayout() {
     if (!data || !layers) {
         return;
@@ -259,7 +268,7 @@ void GeometryTileWorker::redoLayout() {
 
     std::vector<std::string> symbolOrder;
     for (auto it = layers->rbegin(); it != layers->rend(); it++) {
-        if ((*it)->is<RenderSymbolLayer>()) {
+        if ((*it)->is<SymbolLayer>()) {
             symbolOrder.push_back((*it)->getID());
         }
     }
@@ -272,7 +281,10 @@ void GeometryTileWorker::redoLayout() {
     GlyphDependencies glyphDependencies;
     IconDependencyMap iconDependencyMap;
 
-    std::vector<std::vector<const RenderLayer*>> groups = groupByLayout(*layers);
+    // Create render layers and group by layout
+    std::vector<std::unique_ptr<RenderLayer>> renderLayers = toRenderLayers(*layers);
+    std::vector<std::vector<const RenderLayer*>> groups = groupByLayout(renderLayers);
+
     for (auto& group : groups) {
         if (obsolete) {
             return;
@@ -284,7 +296,7 @@ void GeometryTileWorker::redoLayout() {
 
         const RenderLayer& leader = *group.at(0);
 
-        auto geometryLayer = (*data)->getLayer(leader.baseImpl->sourceLayer);
+        auto geometryLayer = (*data)->getLayer(leader.baseImpl.sourceLayer);
         if (!geometryLayer) {
             continue;
         }
@@ -300,8 +312,8 @@ void GeometryTileWorker::redoLayout() {
             symbolLayoutMap.emplace(leader.getID(),
                 leader.as<RenderSymbolLayer>()->impl->createLayout(parameters, group, *geometryLayer, glyphDependencies, iconDependencyMap));
         } else {
-            const Filter& filter = leader.baseImpl->filter;
-            const std::string& sourceLayerID = leader.baseImpl->sourceLayer;
+            const Filter& filter = leader.baseImpl.filter;
+            const std::string& sourceLayerID = leader.baseImpl.sourceLayer;
             std::shared_ptr<Bucket> bucket = leader.createBucket(parameters, group);
 
             for (std::size_t i = 0; !obsolete && i < geometryLayer->featureCount(); i++) {

@@ -7,9 +7,9 @@
 
 namespace mbgl {
 
-RenderFillLayer::RenderFillLayer(std::shared_ptr<const style::FillLayer::Impl> _impl)
-        : RenderLayer(style::LayerType::Fill, std::move(_impl)),
-          impl(static_cast<const style::FillLayer::Impl *>(baseImpl.get())) {
+RenderFillLayer::RenderFillLayer(const style::FillLayer::Impl& _impl)
+        : RenderLayer(style::LayerType::Fill, _impl),
+          impl(&_impl) {
 }
 
 std::unique_ptr<RenderLayer> RenderFillLayer::clone() const {

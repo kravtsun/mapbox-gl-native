@@ -5,7 +5,7 @@ namespace mbgl {
 namespace style {
 
 std::unique_ptr<RenderLayer> LineLayer::Impl::createRenderLayer() const {
-    return std::make_unique<RenderLineLayer>(shared_from_this());
+    return std::make_unique<RenderLineLayer>(*this);
 }
 
 } // namespace style

@@ -8,13 +8,13 @@ namespace mbgl {
 namespace style {
 
 BackgroundLayer::BackgroundLayer(const std::string& layerID)
-    : Layer(LayerType::Background, std::make_shared<Impl>())
+    : Layer(LayerType::Background, std::make_unique<Impl>())
     , impl(static_cast<Impl*>(baseImpl.get())) {
     impl->id = layerID;
 }
 
 BackgroundLayer::BackgroundLayer(const Impl& other)
-    : Layer(LayerType::Background, std::make_shared<Impl>(other))
+    : Layer(LayerType::Background, std::make_unique<Impl>(other))
     , impl(static_cast<Impl*>(baseImpl.get())) {
 }
 

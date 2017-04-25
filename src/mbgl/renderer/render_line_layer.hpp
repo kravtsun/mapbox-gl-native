@@ -9,7 +9,7 @@ namespace mbgl {
 class RenderLineLayer: public RenderLayer {
 public:
 
-    RenderLineLayer(std::shared_ptr<const style::LineLayer::Impl>);
+    RenderLineLayer(const style::LineLayer::Impl&);
     ~RenderLineLayer() final = default;
 
     std::unique_ptr<RenderLayer> clone() const override;

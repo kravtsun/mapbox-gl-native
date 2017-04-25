@@ -9,7 +9,7 @@ class TransformState;
 
 namespace style {
 
-class CustomLayer::Impl : public Layer::Impl, public std::enable_shared_from_this<CustomLayer::Impl> {
+class CustomLayer::Impl : public Layer::Impl {
 public:
     Impl(const std::string& id,
          CustomLayerInitializeFunction,

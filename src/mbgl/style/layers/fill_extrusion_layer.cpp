@@ -8,14 +8,14 @@ namespace mbgl {
 namespace style {
 
 FillExtrusionLayer::FillExtrusionLayer(const std::string& layerID, const std::string& sourceID)
-    : Layer(LayerType::FillExtrusion, std::make_shared<Impl>())
+    : Layer(LayerType::FillExtrusion, std::make_unique<Impl>())
     , impl(static_cast<Impl*>(baseImpl.get())) {
     impl->id = layerID;
     impl->source = sourceID;
 }
 
 FillExtrusionLayer::FillExtrusionLayer(const Impl& other)
-    : Layer(LayerType::FillExtrusion, std::make_shared<Impl>(other))
+    : Layer(LayerType::FillExtrusion, std::make_unique<Impl>(other))
     , impl(static_cast<Impl*>(baseImpl.get())) {
 }
 

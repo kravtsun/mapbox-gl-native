@@ -14,13 +14,13 @@ namespace style {
 
 <% if (type === 'background') { -%>
 <%- camelize(type) %>Layer::<%- camelize(type) %>Layer(const std::string& layerID)
-    : Layer(LayerType::<%- camelize(type) %>, std::make_shared<Impl>())
+    : Layer(LayerType::<%- camelize(type) %>, std::make_unique<Impl>())
     , impl(static_cast<Impl*>(baseImpl.get())) {
     impl->id = layerID;
 }
 <% } else { -%>
 <%- camelize(type) %>Layer::<%- camelize(type) %>Layer(const std::string& layerID, const std::string& sourceID)
-    : Layer(LayerType::<%- camelize(type) %>, std::make_shared<Impl>())
+    : Layer(LayerType::<%- camelize(type) %>, std::make_unique<Impl>())
     , impl(static_cast<Impl*>(baseImpl.get())) {
     impl->id = layerID;
     impl->source = sourceID;
@@ -28,7 +28,7 @@ namespace style {
 <% } -%>
 
 <%- camelize(type) %>Layer::<%- camelize(type) %>Layer(const Impl& other)
-    : Layer(LayerType::<%- camelize(type) %>, std::make_shared<Impl>(other))
+    : Layer(LayerType::<%- camelize(type) %>, std::make_unique<Impl>(other))
     , impl(static_cast<Impl*>(baseImpl.get())) {
 }
 

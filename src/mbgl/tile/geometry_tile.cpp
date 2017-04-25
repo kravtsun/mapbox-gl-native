@@ -4,6 +4,8 @@
 #include <mbgl/tile/tile_observer.hpp>
 #include <mbgl/style/update_parameters.hpp>
 #include <mbgl/style/layer_impl.hpp>
+#include <mbgl/style/layers/background_layer.hpp>
+#include <mbgl/style/layers/custom_layer.hpp>
 #include <mbgl/renderer/render_background_layer.hpp>
 #include <mbgl/renderer/render_custom_layer.hpp>
 #include <mbgl/renderer/render_symbol_layer.hpp>
@@ -86,12 +88,12 @@ void GeometryTile::redoLayout() {
     // state despite pending parse operations.
     pending = true;
 
-    std::vector<std::unique_ptr<RenderLayer>> copy;
+    std::vector<std::unique_ptr<Layer>> copy;
 
-    for (const RenderLayer* layer : style.getRenderLayers()) {
+    for (const Layer* layer : style.getLayers()) {
         // Avoid cloning and including irrelevant layers.
-        if (layer->is<RenderBackgroundLayer>() ||
-            layer->is<RenderCustomLayer>() ||
+        if (layer->is<BackgroundLayer>() ||
+            layer->is<CustomLayer>() ||
             layer->baseImpl->source != sourceID ||
             id.overscaledZ < std::floor(layer->baseImpl->minZoom) ||
             id.overscaledZ >= std::ceil(layer->baseImpl->maxZoom) ||
@@ -99,7 +101,7 @@ void GeometryTile::redoLayout() {
             continue;
         }
 
-        copy.push_back(layer->clone());
+        copy.push_back(layer->baseImpl->clone());
     }
 
     ++correlationID;
@@ -161,7 +163,7 @@ void GeometryTile::getIcons(IconDependencyMap iconDependencyMap) {
 
 Bucket* GeometryTile::getBucket(const RenderLayer& layer) const {
     const auto& buckets = layer.is<RenderSymbolLayer>() ? symbolBuckets : nonSymbolBuckets;
-    const auto it = buckets.find(layer.baseImpl->id);
+    const auto it = buckets.find(layer.baseImpl.id);
     if (it == buckets.end()) {
         return nullptr;
     }

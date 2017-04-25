@@ -9,7 +9,7 @@ namespace mbgl {
 class RenderFillLayer: public RenderLayer {
 public:
 
-    RenderFillLayer(std::shared_ptr<const style::FillLayer::Impl>);
+    RenderFillLayer(const style::FillLayer::Impl&);
     ~RenderFillLayer() final = default;
 
     std::unique_ptr<RenderLayer> clone() const override;

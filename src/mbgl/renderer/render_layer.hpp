@@ -21,7 +21,7 @@ class PropertyEvaluationParameters;
 class RenderLayer {
 
 protected:
-    RenderLayer(style::LayerType, std::shared_ptr<const style::Layer::Impl> baseImpl_);
+    RenderLayer(style::LayerType, const style::Layer::Impl&);
 
     const style::LayerType type;
 
@@ -74,7 +74,7 @@ public:
     virtual std::unique_ptr<Bucket> createBucket(const BucketParameters&, const std::vector<const RenderLayer*>&) const = 0;
 
     // Private implementation
-    const std::shared_ptr<const style::Layer::Impl> baseImpl;
+    const style::Layer::Impl& baseImpl;
 
     friend std::string layoutKey(const RenderLayer&);
 protected:

@@ -6,7 +6,7 @@ namespace mbgl {
 namespace style {
 
 std::unique_ptr<RenderLayer> CustomLayer::Impl::createRenderLayer() const {
-    return std::make_unique<RenderCustomLayer>(shared_from_this());
+    return std::make_unique<RenderCustomLayer>(*this);
 }
 
 CustomLayer::Impl::Impl(const std::string& id_,
@@ -23,7 +23,7 @@ CustomLayer::Impl::Impl(const std::string& id_,
 }
 
 CustomLayer::Impl::Impl(const CustomLayer::Impl &other)
-        : Layer::Impl(other), std::enable_shared_from_this<CustomLayer::Impl>(other) {
+        : Layer::Impl(other) {
     id = other.id;
     // Don't copy anything else.
 }

@@ -55,7 +55,7 @@ public:
 
 class RenderSymbolLayer: public RenderLayer {
 public:
-    RenderSymbolLayer(std::shared_ptr<const style::SymbolLayer::Impl>);
+    RenderSymbolLayer(const style::SymbolLayer::Impl&);
     ~RenderSymbolLayer() final = default;
 
     std::unique_ptr<RenderLayer> clone() const override;
