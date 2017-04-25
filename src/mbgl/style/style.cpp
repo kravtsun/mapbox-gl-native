@@ -111,6 +111,7 @@ TransitionOptions Style::getTransitionOptions() const {
 void Style::setJSON(const std::string& json) {
     sources.clear();
     layers.clear();
+    renderLayers.clear();
     classes.clear();
     transitionOptions = {};
     updateBatch = {};
