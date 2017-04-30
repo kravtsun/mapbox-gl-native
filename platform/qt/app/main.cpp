@@ -9,6 +9,7 @@ int main(int argc, char **argv)
     QMapboxGLSettings settings;
     settings.setCacheDatabasePath("/tmp/mbgl-cache.db");
     settings.setCacheDatabaseMaximumSize(20 * 1024 * 1024);
+    settings.setApiBaseUrl("http://localhost:8080");
 
     MapWindow window(settings);
 

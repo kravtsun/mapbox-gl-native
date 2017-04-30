@@ -375,10 +375,10 @@ void MapWindow::initializeGL()
     m_map.reset(new QMapboxGL(nullptr, m_settings, size(), pixelRatio()));
     connect(m_map.data(), SIGNAL(needsRendering()), this, SLOT(update()));
 
-    // Set default location to Helsinki.
-    m_map->setCoordinateZoom(QMapbox::Coordinate(60.170448, 24.942046), 14);
+    // Set default location to Saint-Petersburg.
+    m_map->setCoordinateZoom(QMapbox::Coordinate(59.9505, 30.1705), 10);
 
-    QString styleUrl = qgetenv("MAPBOX_STYLE_URL");
+    QString styleUrl = "http://localhost:8080/styles/klokantech-basic.json";
     if (styleUrl.isEmpty()) {
         changeStyle();
     } else {

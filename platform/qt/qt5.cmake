@@ -1,6 +1,6 @@
 find_package(Qt5Core     REQUIRED)
 find_package(Qt5Gui      REQUIRED)
-find_package(Qt5Location REQUIRED)
+#find_package(Qt5Location REQUIRED)
 find_package(Qt5Network  REQUIRED)
 find_package(Qt5OpenGL   REQUIRED)
 find_package(Qt5Widgets  REQUIRED)
@@ -24,7 +24,7 @@ target_link_libraries(qmapboxgl
     PRIVATE mbgl-core
     PRIVATE Qt5::Core
     PRIVATE Qt5::Gui
-    PRIVATE Qt5::Location
+    #PRIVATE Qt5::Location
     PRIVATE Qt5::Sql
 )
 

@@ -33,3 +33,7 @@ xcuserdata
 /documentation
 test/fixtures/api/assets.zip
 test/fixtures/storage/assets.zip
+
+build-*
+*.pro.user
+*.mbtiles
