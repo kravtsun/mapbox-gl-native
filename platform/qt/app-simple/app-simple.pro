@@ -9,15 +9,17 @@ TARGET = QtWidgets
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    mapwindow.cpp
 
 HEADERS += \
-    include/QMapbox \
-    include/QMapboxGL \
-    include/QQuickMapboxGL \
-    include/QQuickMapboxGLMapParameter \
-    include/qmapbox.hpp \
-    include/qmapboxgl.hpp
+    ../include/QMapbox \
+    ../include/QMapboxGL \
+    ../include/QQuickMapboxGL \
+    ../include/QQuickMapboxGLMapParameter \
+    ../include/qmapbox.hpp \
+    ../include/qmapboxgl.hpp \
+    mapwindow.h
 
 unix:!macx: LIBS += -L$$PWD/../../../build/qt-linux-x86_64/Debug/ -lmbgl-core -lqmapboxgl
 
