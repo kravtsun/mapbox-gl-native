@@ -10,18 +10,24 @@
 #include <QString>
 #include <QFileDialog>
 
+#include <QtDebug>
+
 #if QT_VERSION >= 0x050000
 #include <QWindow>
 #endif
 
-MapWindow::MapWindow(const QMapboxGLSettings &settings)
-    : m_settings(settings)
+MapWindow::MapWindow(const QMapboxGLSettings &settings, const QString &styleFile)
+    : m_styleFile(styleFile)
+    , m_settings(settings)
 {
     setWindowIcon(QIcon(":icon.png"));
 }
 
 void MapWindow::keyPressEvent(QKeyEvent *ev) {
     QString file;
+    QString layer = "place-other";
+    static bool visibility = false;
+
     switch(ev->key()) {
     case Qt::Key_S:
         //            grabFramebuffer().save("tmp.png");
@@ -37,6 +43,16 @@ void MapWindow::keyPressEvent(QKeyEvent *ev) {
                                             "PNG (*.png);; BMP (*.bmp);;TIFF (*.tiff *.tif);; JPEG (*.jpg *.jpeg)");
 
         grab().save(file);
+        break;
+    case Qt::Key_L:
+        if (m_map->layerExists(layer)) {
+//            m_map->removeLayer(layer);
+            m_map->setLayoutProperty(layer, "visibility", visibility ? "none" : "visible");
+            visibility = !visibility;
+        }
+//        QString visibility = m_map->setLayoutProperty();
+//        m_map->setLayoutProperty("layers.place-other", "visibility", "none");
+        resetStyle();
         break;
     case Qt::Key_Q:
         QOpenGLWidget::close();
@@ -114,19 +130,31 @@ void MapWindow::wheelEvent(QWheelEvent *ev)
     ev->accept();
 }
 
+void MapWindow::resetStyle()
+{
+    QString stylePath = QDir(QDir::currentPath()).absoluteFilePath(m_styleFile);
+    QString styleUrl = QUrl::fromLocalFile(stylePath).toString();
+//    qDebug() << "Setting style: " << styleUrl;
+    m_map->setStyleUrl(styleUrl);
+//    m_map->needsRendering();
+//    m_map->mapChanged(QMapboxGL::MapChangeSourceDidChange);
+}
+
 void MapWindow::initializeGL() {
     m_map.reset(new QMapboxGL(nullptr, m_settings, size(), devicePixelRatio()));
     connect(m_map.data(), SIGNAL(needsRendering()), this, SLOT(update()));
 
-    // Set default location to Saint-Petersburg.
-    m_map->setCoordinateZoom(QMapbox::Coordinate(59.9505, 30.1705), 10);
+    // lat,long.
+    QMapbox::Coordinate spbCoordinates{59.9505, 30.1705};
+    QMapbox::Coordinate taganrogCoordinates{47.2396, 38.8799};
 
-    QString styleUrl = "http://localhost:8080/styles/osm-bright.json";
-    m_map->setStyleUrl(styleUrl);
+//    m_map->setCoordinateZoom(QMapbox::Coordinate(8.5693359375,47.39804691303085), 13);
+    m_map->setCoordinateZoom(taganrogCoordinates, 11);
+    resetStyle();
 
     m_zoomAnimation = new QPropertyAnimation(m_map.data(), "zoom");
-//    connect(m_zoomAnimation, SIGNAL(finished()), this, SLOT(animationFinished()));
-//    connect(m_zoomAnimation, SIGNAL(valueChanged(const QVariant&)), this, SLOT(animationValueChanged()));
+    connect(m_zoomAnimation, SIGNAL(finished()), this, SLOT(animationFinished()));
+    connect(m_zoomAnimation, SIGNAL(valueChanged(const QVariant&)), this, SLOT(animationValueChanged()));
 }
 
 void MapWindow::paintGL() {

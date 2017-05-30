@@ -3,19 +3,52 @@
 
 #include <iostream>
 #include <QApplication>
+#include <QCommandLineParser>
+#include <QtDebug>
 #include "mapwindow.h"
 
 using namespace std;
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
+    QCoreApplication::setApplicationName("qmapboxgl-app-simple");
+    QCoreApplication::setApplicationVersion("1.0");
+
+    QCommandLineParser parser;
+    parser.setApplicationDescription("Test helper");
+    parser.addHelpOption();
+    parser.addVersionOption();
+
+//    QCommandLineOption renderConfigOption{"config",
+//                                          QCoreApplication::translate("main", "Configuration file for rendering."),
+//                                          "config",
+//                                          "osm-bright.json"};
+
+    QCommandLineOption tilesHost{"host",
+                                 QCoreApplication::translate("main", "host of vector tiles."),
+                                 "host",
+                                 "localhost"};
+
+    QCommandLineOption tilesPort{{"p", "port"},
+                                 QCoreApplication::translate("main", "port of vector tiles."),
+                                 "port",
+                                 "8080"};
+
+    QCommandLineOption styleFile{"style",
+                                QCoreApplication::translate("main", "style file for rendering."),
+                                 "style",
+                                 "osm-bright.json"};
+
+    parser.addOptions({tilesHost, tilesPort, styleFile});
+    parser.process(QCoreApplication::arguments());
 
     QMapboxGLSettings settings;
 //    settings.setCacheDatabasePath("/tmp/mbgl-cache.db");
 //    settings.setCacheDatabaseMaximumSize(20 * 1024 * 1024);
-    settings.setApiBaseUrl("http://localhost:8080");
+    const QString apiBaseUrl = "http://" + parser.value(tilesHost) + ":" + parser.value(tilesPort);
+    settings.setApiBaseUrl(apiBaseUrl);
 
-    MapWindow window(settings);
+    MapWindow window(settings, parser.value(styleFile));
     window.resize(800, 600);
     window.show();
 

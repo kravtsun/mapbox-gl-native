@@ -13,7 +13,7 @@ class QWheelEvent;
 class MapWindow : public QOpenGLWidget
 {
 public:
-    MapWindow(const QMapboxGLSettings &);
+    MapWindow(const QMapboxGLSettings &, const QString &styleFile);
 
 private:
     // Q{,Open}GLWidget implementation.
@@ -30,6 +30,9 @@ private:
 
     QPointF m_lastPos;
     QScopedPointer<QMapboxGL> m_map;
+
+    void resetStyle();
+    QString m_styleFile;
 
     QMapboxGLSettings m_settings;
 };
