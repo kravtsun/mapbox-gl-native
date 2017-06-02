@@ -1,0 +1,162 @@
+{
+    "attribution": "<a href=\"http://openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> <a href=\"http://www.openstreetmap.org/about/\" target=\"_blank\">&copy; OpenStreetMap contributors</a>",
+    "basename": "saint-petersburg_russia.mbtiles",
+    "bounds": [
+        29.168,
+        59.556,
+        31.173,
+        60.345
+    ],
+    "center": [
+        30.1705,
+        59.9505,
+        10
+    ],
+    "description": "Extract from http://openmaptiles.org",
+    "format": "pbf",
+    "id": "openmaptiles",
+    "maskLevel": "8",
+    "maxzoom": 14,
+    "minzoom": 0,
+    "name": "OpenMapTiles",
+    "tilejson": "2.0.0",
+    "tiles": [
+        "http://localhost:8080/data/v3/{z}/{x}/{y}.pbf"
+    ],
+    "type": "baselayer",
+    "vector_layers": [
+        {
+            "fields": {
+                "class": "String"
+            },
+            "id": "water",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "class": "String",
+                "name": "String"
+            },
+            "id": "waterway",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "class": "String",
+                "subclass": "String"
+            },
+            "id": "landcover",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "class": "String"
+            },
+            "id": "landuse",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "class": "String"
+            },
+            "id": "park",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "admin_level": "Number"
+            },
+            "id": "boundary",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "class": "String"
+            },
+            "id": "aeroway",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "brunnel": "String",
+                "class": "String",
+                "oneway": "Number",
+                "ramp": "Number",
+                "service": "String"
+            },
+            "id": "transportation",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "render_height": "Number",
+                "render_min_height": "Number"
+            },
+            "id": "building",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "class": "String",
+                "name": "String",
+                "name_en": "String"
+            },
+            "id": "water_name",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "class": "String",
+                "name": "String",
+                "ref": "String",
+                "ref_length": "Number"
+            },
+            "id": "transportation_name",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "capital": "Number",
+                "class": "String",
+                "name": "String",
+                "name_en": "String",
+                "rank": "Number"
+            },
+            "id": "place",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "housenumber": "String"
+            },
+            "id": "housenumber",
+            "maxzoom": 14,
+            "minzoom": 0
+        },
+        {
+            "fields": {
+                "class": "String",
+                "name": "String",
+                "name_en": "String",
+                "rank": "Number",
+                "subclass": "String"
+            },
+            "id": "poi",
+            "maxzoom": 14,
+            "minzoom": 0
+        }
+    ],
+    "version": "3.3"
+}

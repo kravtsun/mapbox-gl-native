@@ -34,13 +34,16 @@ int main(int argc, char **argv) {
                                  "port",
                                  "8080"};
 
-    QCommandLineOption styleFile{"style",
-                                QCoreApplication::translate("main", "style file for rendering."),
-                                 "style",
+    QCommandLineOption styleFile{"config",
+                                 QCoreApplication::translate("main", "style file for rendering."),
+                                 "config",
                                  "osm-bright.json"};
 
     parser.addOptions({tilesHost, tilesPort, styleFile});
+    qDebug() << QCoreApplication::arguments();
     parser.process(QCoreApplication::arguments());
+//    qDebug() << parser.value("config");
+//    exit(0);
 
     QMapboxGLSettings settings;
 //    settings.setCacheDatabasePath("/tmp/mbgl-cache.db");

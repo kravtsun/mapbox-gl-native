@@ -3,6 +3,7 @@
 
 #include <QOpenGLWidget>
 #include <QPropertyAnimation>
+#include <QGridLayout>
 #include "qmapboxgl.hpp"
 
 
@@ -30,9 +31,15 @@ private:
 
     QPointF m_lastPos;
     QScopedPointer<QMapboxGL> m_map;
+    QStringList m_layers;
+
+    QGridLayout *m_checkbox_layout;
+
+    QString m_styleFile;
 
     void resetStyle();
-    QString m_styleFile;
+
+    void toggleLayer(QString layer, bool state);
 
     QMapboxGLSettings m_settings;
 };

@@ -12,6 +12,18 @@
 
 #include <QtDebug>
 
+#include <QCheckBox>
+#include <QPushButton>
+#include <QScrollArea>
+#include <QPair>
+
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
+#include <algorithm>
+#include <functional>
+
 #if QT_VERSION >= 0x050000
 #include <QWindow>
 #endif
@@ -21,6 +33,20 @@ MapWindow::MapWindow(const QMapboxGLSettings &settings, const QString &styleFile
     , m_settings(settings)
 {
     setWindowIcon(QIcon(":icon.png"));
+//    QWidget *checkboxWindow = new QWidget(static_cast<QWidget *>(this));
+    QWidget *checkboxWindow = new QWidget;
+//    checkboxWindow->resize(640, 480);
+    m_checkbox_layout = new QGridLayout;
+    checkboxWindow->setLayout(m_checkbox_layout);
+
+    QScrollArea* scrollArea = new QScrollArea;
+    scrollArea->resize(400, 800);
+    scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setWidget(checkboxWindow);
+    scrollArea->setWindowTitle("Layers");
+    scrollArea->show();
 }
 
 void MapWindow::keyPressEvent(QKeyEvent *ev) {
@@ -45,14 +71,8 @@ void MapWindow::keyPressEvent(QKeyEvent *ev) {
         grab().save(file);
         break;
     case Qt::Key_L:
-        if (m_map->layerExists(layer)) {
-//            m_map->removeLayer(layer);
-            m_map->setLayoutProperty(layer, "visibility", visibility ? "none" : "visible");
-            visibility = !visibility;
-        }
-//        QString visibility = m_map->setLayoutProperty();
-//        m_map->setLayoutProperty("layers.place-other", "visibility", "none");
-        resetStyle();
+        toggleLayer(layer, !visibility);
+        visibility = !visibility;
         break;
     case Qt::Key_Q:
         QOpenGLWidget::close();
@@ -67,12 +87,6 @@ void MapWindow::mousePressEvent(QMouseEvent *ev)
 #else
     m_lastPos = ev->localPos();
 #endif
-
-//    if (ev->type() == QEvent::MouseButtonPress) {
-//        if (ev->buttons() == (Qt::LeftButton | Qt::RightButton)) {
-//            changeStyle();
-//        }
-//    }
 
     if (ev->type() == QEvent::MouseButtonDblClick) {
         if (ev->buttons() == Qt::LeftButton) {
@@ -130,12 +144,52 @@ void MapWindow::wheelEvent(QWheelEvent *ev)
     ev->accept();
 }
 
+void MapWindow::toggleLayer(QString layer, bool state) {
+//    QString layer = "place-other";
+    if (m_map->layerExists(layer)) {
+//        m_map->removeLayer(layer);
+        m_map->setLayoutProperty(layer, "visibility", state ? "visible" : "none");
+    }
+//    resetStyle();
+}
+
 void MapWindow::resetStyle()
 {
     QString stylePath = QDir(QDir::currentPath()).absoluteFilePath(m_styleFile);
     QString styleUrl = QUrl::fromLocalFile(stylePath).toString();
-//    qDebug() << "Setting style: " << styleUrl;
+    qDebug() << "Setting style: " << styleUrl;
     m_map->setStyleUrl(styleUrl);
+
+    QFile styleJsonFile(stylePath);
+    styleJsonFile.open(QIODevice::ReadOnly | QIODevice::Text);
+    Q_ASSERT(styleJsonFile.isOpen());
+    QJsonDocument styleJson = QJsonDocument::fromJson(styleJsonFile.readAll());
+    QJsonObject styleObject = styleJson.object();
+    QJsonArray layersArray = styleObject.value("layers").toArray();
+
+    if (styleObject.contains("center")) {
+        auto centerArray = styleObject.value("center").toArray();
+        QMapbox::Coordinate centerCoordinates = qMakePair(centerArray.at(0).toDouble(), centerArray.at(1).toDouble());
+//        qDebug() << center;
+        m_map->setCoordinate(centerCoordinates);
+    }
+
+    auto toLayerId = [](const QJsonValue &value) {
+        return value.toObject().value("id").toString();
+    };
+    std::transform(layersArray.begin(), layersArray.end(), std::back_inserter(m_layers), toLayerId);
+
+    for (auto const &layer : m_layers) {
+        QCheckBox *checkbox = new QCheckBox(this);
+        checkbox->setCheckState(Qt::CheckState::Checked);
+        checkbox->setText(layer);
+        using namespace std::placeholders;
+        auto b = std::bind(&MapWindow::toggleLayer, this, layer, _1);
+        connect(checkbox, &QCheckBox::toggled, b);
+        m_checkbox_layout->addWidget(checkbox);
+    }
+
+//    m_map.reset(new QMapboxGL(nullptr, m_settings, size(), devicePixelRatio()));
 //    m_map->needsRendering();
 //    m_map->mapChanged(QMapboxGL::MapChangeSourceDidChange);
 }
@@ -145,16 +199,16 @@ void MapWindow::initializeGL() {
     connect(m_map.data(), SIGNAL(needsRendering()), this, SLOT(update()));
 
     // lat,long.
-    QMapbox::Coordinate spbCoordinates{59.9505, 30.1705};
-    QMapbox::Coordinate taganrogCoordinates{47.2396, 38.8799};
+    QMapbox::Coordinate spbCoordinates{59.9505, 30.3505};
+//    QMapbox::Coordinate taganrogCoordinates{47.2396, 38.8799};
 
 //    m_map->setCoordinateZoom(QMapbox::Coordinate(8.5693359375,47.39804691303085), 13);
-    m_map->setCoordinateZoom(taganrogCoordinates, 11);
+    m_map->setCoordinateZoom(spbCoordinates, 11);
     resetStyle();
 
     m_zoomAnimation = new QPropertyAnimation(m_map.data(), "zoom");
-    connect(m_zoomAnimation, SIGNAL(finished()), this, SLOT(animationFinished()));
-    connect(m_zoomAnimation, SIGNAL(valueChanged(const QVariant&)), this, SLOT(animationValueChanged()));
+//    connect(m_zoomAnimation, SIGNAL(finished()), this, SLOT(animationFinished()));
+//    connect(m_zoomAnimation, SIGNAL(valueChanged(const QVariant&)), this, SLOT(animationValueChanged()));
 }
 
 void MapWindow::paintGL() {

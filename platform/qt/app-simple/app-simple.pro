@@ -5,7 +5,7 @@ CONFIG += qt
 QT += gui core
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-TARGET = QtWidgets
+TARGET = app-simple
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
