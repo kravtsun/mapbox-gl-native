@@ -37,3 +37,9 @@ test/fixtures/storage/assets.zip
 build-*
 *.pro.user
 *.mbtiles
+*.o
+platform/qt/app-simple/Makefile
+platform/qt/app-simple/Makefile
+platform/qt/app-simple/app-simple
+platform/qt/app-simple/moc_qmapboxgl.cpp
+

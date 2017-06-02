@@ -19,11 +19,6 @@ int main(int argc, char **argv) {
     parser.addHelpOption();
     parser.addVersionOption();
 
-//    QCommandLineOption renderConfigOption{"config",
-//                                          QCoreApplication::translate("main", "Configuration file for rendering."),
-//                                          "config",
-//                                          "osm-bright.json"};
-
     QCommandLineOption tilesHost{"host",
                                  QCoreApplication::translate("main", "host of vector tiles."),
                                  "host",
@@ -40,10 +35,7 @@ int main(int argc, char **argv) {
                                  "osm-bright.json"};
 
     parser.addOptions({tilesHost, tilesPort, styleFile});
-    qDebug() << QCoreApplication::arguments();
     parser.process(QCoreApplication::arguments());
-//    qDebug() << parser.value("config");
-//    exit(0);
 
     QMapboxGLSettings settings;
 //    settings.setCacheDatabasePath("/tmp/mbgl-cache.db");
